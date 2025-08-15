@@ -15,13 +15,15 @@ pipeline {
             }
         }
 
-        stage('Copy HTML to Server') {
-            steps {
-                sh """
-                scp -i $SSH_KEY index.html $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
-                """
-            }
+stage('Copy HTML to Server') {
+    steps {
+        withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+            sh '''
+                scp -o StrictHostKeyChecking=no -i "$SSH_KEY" index.html ec2-user@18.144.54.98:/home/ec2-user/
+            '''
         }
+    }
+}
 
         stage('Run HTML Server') {
             steps {
