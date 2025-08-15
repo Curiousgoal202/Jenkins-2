@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SERVER_USER = "ec2-user"               // change to your username
-        SERVER_IP = "3.111.222.123"             // change to your server IP
+        SERVER_IP = "18.144.54.98"             // change to your server IP
         SSH_KEY = credentials('server-ssh-key') // Jenkins SSH key credentials
         CUSTOM_PORT = "8085"                    // change to your desired port
     }
