@@ -1,0 +1,41 @@
+pipeline {
+  agent any
+  
+  environment {
+         SERVER_USER = "ec2-user"
+         SERVER_IP = "18.144.54.98"
+         SSH_KEY = credentials('server-ssh-key')
+         CUSTOM_PORT = "8085"
+}
+
+  stages {
+         stage('Checkout Code'){
+         steps {
+               git branch: 'main' , url: 'https://github.com/Curiousgoal202/Jenkins-2.git'
+          }
+  }
+         stage('Copy HTML to Server'){
+         steps {
+             ssh """
+             scp -i $SSH_KEY index.html $SERVER_USER@SERVER_IP:/home/$SERVER_USER/
+             """
+           }
+}
+
+        stage('Run HTML Server'){
+        steps {
+            ssh """
+            ssh -i $SSH_KEY $SERVER_USER@SERVER_IP
+            nohup python3 -m http.server $CUSTOM_PORT --directory /home/$SERVER_USER/ > /dev/null 2>&1 &
+           """
+           }
+       }
+}
+
+        post {
+        success {
+              echo "Your HTML file is available at: http://$SERVER_IP:$CUSTOM_PORT"
+           }
+      }
+}
+
